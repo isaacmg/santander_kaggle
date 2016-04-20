@@ -1,2 +1,5 @@
 *.csv 
 junk/
+train/
+test/
+
