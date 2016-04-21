@@ -1,5 +1,6 @@
-#0.83860310533695426) with var(t)
-#0.83920063717666349 normal without additional features
+#0.88742051638116037 with no added features
+#0.88785479357954566 with added
+#0.88845594986 kpython no
 #Next
 
 import gc
@@ -11,15 +12,16 @@ from sklearn.metrics import log_loss, roc_auc_score
 from sklearn.cross_validation import StratifiedKFold
 from sklearn.preprocessing import normalize
 from sklearn.decomposition import PCA
+from sklearn import preprocessing
 
 if __name__ == "__main__":
     print('Started!')
     # Two partitioned training sets a and b
-    train = pd.read_csv('a_train.csv')
-    test_b = pd.read_csv('b_train.csv')
+    train = pd.read_csv('train.csv')
+    test_b = pd.read_csv('test.csv')
 
     # Final test set
-    test = pd.read_csv('test2.csv')
+    test = pd.read_csv('test.csv')
     features = train.columns[1:-1]
     train.insert(1, 'SumZeros', (train[features] == 0).astype(int).sum(axis=1))
     test.insert(1, 'SumZeros', (test[features] == 0).astype(int).sum(axis=1))
@@ -123,7 +125,7 @@ if __name__ == "__main__":
               'SumZeros',  # 0.04696734059097978
               'saldo_var30',  # 0.09611197511664074
               'var38',  # 0.1390357698289269
-              'var15']  # 0.20964230171073095
+              'var15','var_new']  # 0.20964230171073095
     features = train.columns[1:-1]
     todrop = list(set(tokeep).difference(set(features)))
     train.drop(todrop, inplace=True, axis=1)
@@ -142,7 +144,7 @@ if __name__ == "__main__":
     visibletrain = blindtrain = train
     index = 0
     print('Change num_rounds to 350')
-    num_rounds = 10
+    num_rounds = 350
     params = {}
     params["objective"] = "binary:logistic"
     params["eta"] = 0.03
@@ -217,6 +219,6 @@ if __name__ == "__main__":
     submission.to_csv("simplexgbtrain.csv", index=False)
     submission = pd.DataFrame({"ID": test.ID, "TARGET": test_preds})
     submission.to_csv("simplexgbtest.csv", index=False)
-    setb.to_csv("submission_b.csv",index=False)
+    setb.to_csv("submission_db.csv",index=False)
     print('Finish')
-#.37374091148376465
+

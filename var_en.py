@@ -3,6 +3,28 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.cross_validation import train_test_split
 # The categorical enconding of age. This feature did not work out very well...
+def stacker_up():
+    trained_a = pd.read_csv("train/a_train.csv", index_col=0)
+    test = pd.read_csv("train/test2.csv", index_col=0)
+    test_xit = pd.read_csv("simplexgbtest.csv", index_col=0)
+    trained_b = pd.read_csv("train/b_train.csv", index_col=0)
+    b_res = pd.read_csv("submission_b.csv",index_col=0)
+    a_res = pd.read_csv("submission_a.csv",index_col=0)
+    b_res['xit']=b_res['TARGET']
+    a_res['xit']=a_res['TARGET']
+    b_res['TARGET']=trained_b['TARGET']
+    a_res['TARGET']=trained_a['TARGET']
+    trained_a['xit'] = a_res['TARGET']
+    trained_b['xit'] = b_res['TARGET']
+
+    test['xit']=test_xit['TARGET']
+    final=a_res.append(b_res)
+    test_xit.to_csv("test.csv")
+    final.to_csv("train.csv")
+
+
+
+
 def age(age):
     if age['var15']<30:
         return "young"
@@ -20,7 +42,8 @@ def var_38(var3, i):
         return "navg"
 # A combo feature of vars 36 and var15
 def var_new(var3):
-    return var3['var36'] / var3['var15']
+    we=var3['var15'] + var3['saldo_medio_var5_ult3']
+    return var3['var38'] /we
 # Categorization of variable 36 into a and b
 def var_36(var3):
     if var3['var36']==99:
@@ -45,18 +68,19 @@ def var_5(var3):
 
 
 def apply_average(y):
-   avg = y['TARGET'] + y['TARGET2']
-   aveg = avg/2
+   avg = y['TARGET'] + y['TARGET']+y['TARGET2']
+   aveg = avg/3
    return aveg
 
 
-training = pd.read_csv("train2.csv", index_col=0)
-test = pd.read_csv("test2.csv", index_col=0)
-#relt1 = pd.read_csv("simplexgbtest.csv", index_col=0)
-#result2 =pd.read_csv("submission.csv", index_col=0)
-#result2['TARGET2'] = result1.TARGET
-#result1['TARGET']=result2.apply(lambda row: apply_average(row),axis=1)
-#result1.to_csv("subm.csv")
+
+training = pd.read_csv("train/train2.csv", index_col=0)
+test = pd.read_csv("train/test2.csv", index_col=0)
+resut1 = pd.read_csv("simplexgbtest.csv", index_col=0)
+result2 =pd.read_csv("submission.csv", index_col=0)
+result2['TARGET2'] = resut1.TARGET
+resut1['TARGET']=result2.apply(lambda row: apply_average(row),axis=1)
+resut1.to_csv("subm.csv")
 
 
 
@@ -81,22 +105,22 @@ s=s.to_frame()
 print training.saldo_medio_var5_ult3.describe()
 print training.loc[training['TARGET']==1, 'saldo_medio_var5_ult3'].describe()
 
-X['var36']=training.apply(lambda row: var_36(row),axis=1)
+X['var_new']=training.apply(lambda row: var_new(row),axis=1)
 
 #X['age']=training.apply(lambda row: age(row),axis=1)
 X['TARGET']=y
 
-test['var36']=test.apply(lambda row:var_36(row),axis=1)
-
-
-
-
-
-
-
+test['var_new']=test.apply(lambda row:var_new(row),axis=1)
 
 X.to_csv("train.csv")
 test.to_csv("test.csv")
+
+
+
+
+
+
+
 
 
 # Create age classfication
