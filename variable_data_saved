@@ -1,0 +1,19 @@
+n1 (i.e. the count rows with value greater than one)
+count    76020.000000
+mean        33.558419
+std         17.761171
+min          8.000000
+25%         21.000000
+50%         29.000000
+75%         44.000000
+max        149.000000
+Name: n0, dtype: float64
+count    3008.000000
+mean       28.306184
+std        20.037386
+min        10.000000
+25%        15.000000
+50%        17.000000
+75%        35.250000
+max       114.000000
+Name: n0, dtype: float64

@@ -22,6 +22,7 @@ saldo_medio_var5_hace2 = test['saldo_medio_var5_hace2']
 saldo_var33 = test['saldo_var33']
 var38 = test['var38']
 V21 = test['var21']
+
 n1 <- apply(test, 1, FUN=count1)
 
 ##### 0 count per line
@@ -115,7 +116,9 @@ preds[saldo_medio_var5_hace2 > 160000]=0
 preds[saldo_var33 > 0]=0
 preds[var38 > 3988596]=0
 preds[V21>7500]=0
+# If more than 115 always happy  
 preds[n1>115]=0
+
 
 submission <- data.frame(ID=test.id, TARGET=preds)
 cat("saving the submission file\n")

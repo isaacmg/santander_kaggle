@@ -58,6 +58,10 @@ def var_36(var3):
         return "cat5"
     else:
         return "cat6"
+def catty(var3):
+    if var3['var36'] == 99 and var3['num_var4']== 0:
+        return 1
+    return 0
 
 #
 def var_5(var3):
@@ -108,12 +112,13 @@ s=s.to_frame()
 print training.n0.describe()
 print training.loc[training['TARGET']==1, 'n0'].describe()
 
-X['var_new']=training.apply(lambda row: var_38(row,0),axis=1)
+X['var_new']=training.apply(lambda row: catty(row,0),axis=1)
+
 
 #X['age']=training.apply(lambda row: age(row),axis=1)
 X['TARGET']=y
 
-test['var_new']=test.apply(lambda row:var_38(row,0),axis=1)
+test['var_new']=test.apply(lambda row:catty(row,0),axis=1)
 
 X.to_csv("train.csv")
 test.to_csv("test.csv")
