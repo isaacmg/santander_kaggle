@@ -1,6 +1,8 @@
 #0.88742051638116037 with no added features
-#0.88785479357954566 with added
+#0.88785479357954566 with added??
+#0.88785479357954566 ??????
 #0.88845594986 kpython no
+# Categorical feature enginerring to the rescue!!
 #Next
 
 import gc
@@ -18,10 +20,13 @@ if __name__ == "__main__":
     print('Started!')
     # Two partitioned training sets a and b
     train = pd.read_csv('train.csv')
-    test_b = pd.read_csv('test.csv')
+    train['var_new'] = pd.get_dummies(train, prefix=['var_new'])
 
+    test_b = pd.read_csv('test.csv')
+    test_b = pd.get_dummies(test_b, prefix=['var_new'])
     # Final test set
     test = pd.read_csv('test.csv')
+    test = pd.get_dummies(test, prefix=['var_new'])
     features = train.columns[1:-1]
     train.insert(1, 'SumZeros', (train[features] == 0).astype(int).sum(axis=1))
     test.insert(1, 'SumZeros', (test[features] == 0).astype(int).sum(axis=1))

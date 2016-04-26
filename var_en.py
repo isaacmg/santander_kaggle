@@ -68,9 +68,11 @@ def var_5(var3):
 
 
 def apply_average(y):
-   avg = y['TARGET'] + y['TARGET']+y['TARGET2']
+   avg = y['TARGET']*.79 + y['TARGET2']*.21
+   data_dict={}
+  
    aveg = avg/3
-   return aveg
+   return avg
 
 
 
@@ -105,12 +107,12 @@ s=s.to_frame()
 print training.saldo_medio_var5_ult3.describe()
 print training.loc[training['TARGET']==1, 'saldo_medio_var5_ult3'].describe()
 
-X['var_new']=training.apply(lambda row: var_new(row),axis=1)
+X['var_new']=training.apply(lambda row: var_38(row,0),axis=1)
 
 #X['age']=training.apply(lambda row: age(row),axis=1)
 X['TARGET']=y
 
-test['var_new']=test.apply(lambda row:var_new(row),axis=1)
+test['var_new']=test.apply(lambda row:var_38(row,0),axis=1)
 
 X.to_csv("train.csv")
 test.to_csv("test.csv")
