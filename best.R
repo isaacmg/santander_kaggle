@@ -10,26 +10,25 @@ test  <- read.csv("train/test2.csv")
 train$ID <- NULL
 test.id <- test$ID
 test$ID <- NULL
-#shit
-train$var36 <- factor(train$var36)
-test$var36 <- factor(test$var36)
+
 ##### Extracting TARGET
 train.y <- train$TARGET
 train$TARGET <- NULL
-
+count1 <- function(x) {
+  return( sum(x >1) )
+}
 var15 = test['var15']
 saldo_medio_var5_hace2 = test['saldo_medio_var5_hace2']
 saldo_var33 = test['saldo_var33']
 var38 = test['var38']
 V21 = test['var21']
-######## Convert var36
-
-
+n1 <- apply(test, 1, FUN=count1)
 
 ##### 0 count per line
 count0 <- function(x) {
   return( sum(x == 0) )
 }
+
 train$n0 <- apply(train, 1, FUN=count0)
 test$n0 <- apply(test, 1, FUN=count0)
 
@@ -110,11 +109,13 @@ test <- sparse.model.matrix(TARGET ~ ., data = test)
 preds <- predict(clf, test)
 
 # Under 23 year olds are always happy
+
 preds[var15 < 23] = 0
 preds[saldo_medio_var5_hace2 > 160000]=0
 preds[saldo_var33 > 0]=0
 preds[var38 > 3988596]=0
 preds[V21>7500]=0
+preds[n1>115]=0
 
 submission <- data.frame(ID=test.id, TARGET=preds)
 cat("saving the submission file\n")

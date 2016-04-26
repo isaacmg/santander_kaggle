@@ -83,7 +83,8 @@ result2 =pd.read_csv("submission.csv", index_col=0)
 result2['TARGET2'] = resut1.TARGET
 resut1['TARGET']=result2.apply(lambda row: apply_average(row),axis=1)
 resut1.to_csv("subm.csv")
-
+training['n0'] = (training > 0).sum(axis=1)
+test['n0'] = (test > 0).sum(axis=1)
 
 
 print(training.shape)
@@ -104,8 +105,8 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 s=s.to_frame()
 
-print training.saldo_medio_var5_ult3.describe()
-print training.loc[training['TARGET']==1, 'saldo_medio_var5_ult3'].describe()
+print training.n0.describe()
+print training.loc[training['TARGET']==1, 'n0'].describe()
 
 X['var_new']=training.apply(lambda row: var_38(row,0),axis=1)
 
