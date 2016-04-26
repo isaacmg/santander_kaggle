@@ -22,7 +22,7 @@ saldo_medio_var5_hace2 = test['saldo_medio_var5_hace2']
 saldo_var33 = test['saldo_var33']
 var38 = test['var38']
 V21 = test['var21']
-
+va = test['var36']
 n1 <- apply(test, 1, FUN=count1)
 
 ##### 0 count per line
@@ -60,7 +60,7 @@ for(pair in features_pair) {
 
 feature.names <- setdiff(names(train), toRemove)
 
-train$var38 <- log(train$var38)
+train$var38 <- log(train$var38) 
 test$var38 <- log(test$var38)
 
 train <- train[, feature.names]
@@ -76,7 +76,8 @@ for(f in colnames(train)){
   test[test[,f]>lim,f] <- lim  
 }
 #---
-
+###train$var_new <- as.factor(train$var_new)
+###test$var_new <- as.factor(test$var_new)
 train$TARGET <- train.y
 
 

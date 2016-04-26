@@ -17,3 +17,35 @@ min        10.000000
 75%        35.250000
 max       114.000000
 Name: n0, dtype: float64
+new_var (i.e. the three vars point together into 1/0) Produced higher AUC score but
+count    76020.000000
+mean         0.249408
+std          0.432673
+min          0.000000
+25%          0.000000
+50%          0.000000
+75%          0.000000
+max          1.000000
+Name: var_new, dtype: float64
+count    3008.000000
+mean        0.567819
+std         0.495462
+min         0.000000
+25%         0.000000
+50%         1.000000
+75%         1.000000
+max         1.000000
+Name: var_new, dtype: float64
+var36
+Name: var36, dtype: float64
+99    30064
+3     22177
+1     14664
+2      8704
+0       411
+Name: var36, dtype: int64
+99    1938
+1      461
+3      368
+2      241
+Name: var36, dtype: int64
