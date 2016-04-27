@@ -3,8 +3,8 @@ library(Matrix)
 
 set.seed(1234)
 
-train <- read.csv("train.csv")
-test  <- read.csv("test.csv")
+train <- read.csv("train/train2.csv")
+test  <- read.csv("train/test2.csv")
 
 ##### Removing IDs
 train$ID <- NULL
@@ -22,14 +22,15 @@ saldo_medio_var5_hace2 = test['saldo_medio_var5_hace2']
 saldo_var33 = test['saldo_var33']
 var38 = test['var38']
 V21 = test['var21']
-va = test['var36']
-n1 <- apply(test, 1, FUN=count1)
+NV=test['num_var33']+test['saldo_medio_var33_ult3']+test['saldo_medio_var44_hace2']+test['saldo_medio_var44_hace3']+
+test['saldo_medio_var33_ult1']+test['saldo_medio_var44_ult1']
+NV30 = test['num_var30']
+n1 <- apply(test, 1, FUN=count1) 
 
 ##### 0 count per line
 count0 <- function(x) {
   return( sum(x == 0) )
 }
-
 train$n0 <- apply(train, 1, FUN=count0)
 test$n0 <- apply(test, 1, FUN=count0)
 
@@ -60,7 +61,7 @@ for(pair in features_pair) {
 
 feature.names <- setdiff(names(train), toRemove)
 
-train$var38 <- log(train$var38) 
+train$var38 <- log(train$var38)
 test$var38 <- log(test$var38)
 
 train <- train[, feature.names]
@@ -81,7 +82,6 @@ train$TARGET <- train.y
 
 
 train <- sparse.model.matrix(TARGET ~ ., data = train)
-
 
 dtrain <- xgb.DMatrix(data=train, label=train.y)
 watchlist <- list(train=dtrain)
@@ -104,23 +104,33 @@ clf <- xgb.train(   params              = param,
 )
 
 
+#######actual variables
+
+feature.names
+
 test$TARGET <- -1
 
 test <- sparse.model.matrix(TARGET ~ ., data = test)
 
 preds <- predict(clf, test)
-
+pred <-predict(clf,train)
+AUC<-function(actual,predicted)
+{
+  library(pROC)
+  auc<-auc(as.numeric(actual),as.numeric(predicted))
+  auc 
+}
+AUC(train.y,pred) ##AUC
 # Under 23 year olds are always happy
-
 preds[var15 < 23] = 0
 preds[saldo_medio_var5_hace2 > 160000]=0
 preds[saldo_var33 > 0]=0
 preds[var38 > 3988596]=0
+preds[NV>0]=0
 preds[V21>7500]=0
+preds[NV30>9]=0
 # If more than 115 always happy  
-preds[n1>115]=0
-
-
+preds[n1>114]=0
 submission <- data.frame(ID=test.id, TARGET=preds)
 cat("saving the submission file\n")
 write.csv(submission, "submission.csv", row.names = F)
