@@ -6,7 +6,7 @@ import matplotlib
 matplotlib.use("Agg")
 
 from sklearn.cross_validation import train_test_split
-# The categorical enconding of age. This feature did not work out very well...
+
 def stacker_up():
     trained_a = pd.read_csv("train/a_train.csv", index_col=0)
     test = pd.read_csv("train/test2.csv", index_col=0)
@@ -25,6 +25,7 @@ def stacker_up():
     final=a_res.append(b_res)
     test_xit.to_csv("test.csv")
     final.to_csv("train.csv")
+# The categorical enconding of age. This feature did not work out very well...
 def age(age):
     if age['var15']<30:
         return "young"
@@ -157,7 +158,7 @@ print total_counts
 sns.FacetGrid(X, hue="TARGET", size=6) \
    .map(sns.kdeplot, "var_new") \
 
-plt.title('If var36 is 0,1,2 or 3 => less unhappy customers');
+plt.title('var_new');
 
 plt.draw()
 plt.show()
