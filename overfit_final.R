@@ -10,23 +10,21 @@ test  <- read.csv("train/test2.csv")
 train$ID <- NULL
 test.id <- test$ID
 test$ID <- NULL
-##
-count1 <- function(x) {
-  return( sum(x >1) )
-}
-tc <- test
-n1 <- apply(test, 1, FUN=count1) 
 
 ##### Extracting TARGET
 train.y <- train$TARGET
 train$TARGET <- NULL
 
+count1 <- function(x) {
+  return( sum(x >1) )
+}
 ##### 0 count per line
 count0 <- function(x) {
   return( sum(x == 0) )
 }
 train$n0 <- apply(train, 1, FUN=count0)
 test$n0 <- apply(test, 1, FUN=count0)
+n1 <- apply(test, 1, FUN=count1) 
 
 ##### Removing constant features
 cat("\n## Removing the constants features.\n")
@@ -60,7 +58,7 @@ test$var38 <- log(test$var38)
 
 train <- train[, feature.names]
 test <- test[, feature.names]
-#tc <- test
+tc <- test
 
 #---limit vars in test based on min and max vals of train
 print('Setting min-max lims on test data')
@@ -120,9 +118,6 @@ AUC(train.y,pred) ##AUC
 nv = tc['num_var33']+tc['saldo_medio_var33_ult3']+tc['saldo_medio_var44_hace2']+tc['saldo_medio_var44_hace3']+
 tc['saldo_medio_var33_ult1']+tc['saldo_medio_var44_ult1']
 
-##TEST TRY num_var4 at top
-#preds[tc['num_var4'] > 5] = 1
-
 preds[nv > 0] = 0
 preds[tc['var15'] < 23] = 0
 preds[tc['saldo_medio_var5_hace2'] > 160000] = 0
@@ -135,25 +130,16 @@ preds[tc['num_var33_0'] > 0] = 0
 preds[tc['imp_ent_var16_ult1'] > 51003] = 0
 preds[tc['imp_op_var39_comer_ult3'] > 13184] = 0
 preds[tc['saldo_medio_var5_ult3'] > 108251] = 0
-preds[(tc['var15']+tc['num_var45_hace3']+tc['num_var45_ult3']+tc['var36']) <= 24] = 0
-preds[tc['saldo_var5'] > 137615] = 0
-preds[n1>115]=0
-preds[tc['saldo_medio_var13_largo_ult1']>0]=0
-preds[tc['saldo_medio_var13_largo_hace2']>0]=0
-
-
 
 # BAD
 # num_var35 = tc['num_var35']
 # saldo_var30 = tc['saldo_var30']
-#preds[tc['imp_aport_var13_hace3']>210000.000000]=0 bad 
 # No improvement
 # num_var1 = tc['num_var1']
-#preds[tc['num_meses_var13_largo_ult3']>0]=0 
 
 # Testing
-preds[preds<0.001]=0
-
+preds[preds<0.002]=0
+preds[n1>115]=0
 submission <- data.frame(ID=test.id, TARGET=preds)
 cat("saving the submission file\n")
 write.csv(submission, "submission.csv", row.names = F)

@@ -1,8 +1,8 @@
 import pandas as pd
 from sklearn.cross_validation import train_test_split
 from sklearn import cross_validation
-training = pd.read_csv("train2.csv", index_col=0)
-test = pd.read_csv("test2.csv", index_col=0)
+training = pd.read_csv("train/train2.csv", index_col=0)
+test = pd.read_csv("train/test2.csv", index_col=0)
 #relt1 = pd.read_csv("simplexgbtest.csv", index_col=0)
 #result2 =pd.read_csv("submission.csv", index_col=0)
 #result2['TARGET2'] = result1.TARGET
@@ -41,4 +41,10 @@ def test_prediction():
 
 
 
-make_training()
+#make_training()
+training = pd.read_csv("train/train2.csv", index_col=0)
+print training.saldo_medio_var8_hace3.describe()
+print training[training.TARGET==1].saldo_medio_var8_hace3.describe()
+print test.saldo_medio_var8_hace3.describe()
+print training[training.TARGET==1].saldo_var42.value_counts()
+print training.saldo_var42.value_counts()

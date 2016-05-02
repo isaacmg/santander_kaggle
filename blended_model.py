@@ -48,15 +48,18 @@ if __name__ == '__main__':
     verbose = True
     shuffle = False
 
-    training = pd.read_csv("train/train2.csv", index_col=0)
-    test = pd.read_csv("train/test2.csv", index_col=0)
+    training = pd.read_csv("train.csv", index_col=0)
+    test = pd.read_csv("test.csv", index_col=0)
+
+
     print(training.shape)
     print(test.shape)
 
     # Replace -999999 in var3 column with most common value 2
     # See https://www.kaggle.com/cast42/santander-customer-satisfaction/debugging-var3-999999
     # for details
-    training = training.replace(-999999,2)
+    #training = training.var3.replace(-999999,2)
+    #test.var3.replace(-999999,2)
 
     X = training.iloc[:,:-1]
     y = training.TARGET
@@ -140,4 +143,4 @@ if __name__ == '__main__':
 
     print ("Saving Results.")
     submission = pd.DataFrame({"ID":test.index, "TARGET":y_submission})
-    submission.to_csv("submission_RF_GBT_ABC_XGB.csv", index=False)
+    submission.to_csv("b_test.csv", index=False)

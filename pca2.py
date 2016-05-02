@@ -1,14 +1,5 @@
-#0.88742051638116037 with no added features
-
-#0.88785479357954566 with added??
-#0.88785479357954566 ??????
-#0.88734830532083908
-#with stacked
-#0.88845594986 kpython no
-
-# Categorical feature enginerring to the rescue!!
-#Next
-
+#0.88719828944979606 with log
+#0.88715504431798453
 import gc
 import xgboost as xgb
 import numpy as np
@@ -18,23 +9,14 @@ from sklearn.metrics import log_loss, roc_auc_score
 from sklearn.cross_validation import StratifiedKFold
 from sklearn.preprocessing import normalize
 from sklearn.decomposition import PCA
-from sklearn import preprocessing
-
+import math
 if __name__ == "__main__":
     print('Started!')
-    # Two partitioned training sets a and b
     train = pd.read_csv('train/train2.csv')
-    #train['var_new'] = pd.get_dummies(train, prefix=['var_new'])
-
-    test_b = pd.read_csv('train/test2.csv')
-    #test_b = pd.get_dummies(test_b, prefix=['var_new'])
-    # Final test set
-    test = pd.read_csv('test.csv')
-    #test = pd.get_dummies(test, prefix=['var_new'])
+    test = pd.read_csv('train/test2.csv')
     features = train.columns[1:-1]
     train.insert(1, 'SumZeros', (train[features] == 0).astype(int).sum(axis=1))
     test.insert(1, 'SumZeros', (test[features] == 0).astype(int).sum(axis=1))
-    test_b.insert(1, 'SumZeros', (test_b[features] == 0).astype(int).sum(axis=1))
 
     remove = []
     c = train.columns
@@ -45,9 +27,7 @@ if __name__ == "__main__":
                 remove.append(c[j])
 
     train.drop(remove, axis=1, inplace=True)
-    test_b.drop(remove, axis=1, inplace=True)
     test.drop(remove, axis=1, inplace=True)
-
 
     remove = []
     for col in train.columns:
@@ -56,21 +36,18 @@ if __name__ == "__main__":
 
     train.drop(remove, axis=1, inplace=True)
     test.drop(remove, axis=1, inplace=True)
-    test_b.drop(remove, axis=1, inplace=True)
     features = train.columns[1:-1]
     pca = PCA(n_components=2)
+    train['var38']=train['var38'].apply(np.log)
+    test['var38']=test['var38'].apply(np.log)
+
+
     x_train_projected = pca.fit_transform(normalize(train[features], axis=0))
-    x_test_projected = pca.fit_transform(normalize(test[features], axis=0))
-    x1_test_projected = pca.fit_transform(normalize(test_b[features], axis=0))
+    x_test_projected = pca.transform(normalize(test[features], axis=0))
     train.insert(1, 'PCAOne', x_train_projected[:, 0])
     train.insert(1, 'PCATwo', x_train_projected[:, 1])
     test.insert(1, 'PCAOne', x_test_projected[:, 0])
     test.insert(1, 'PCATwo', x_test_projected[:, 1])
-    test_b.insert(1, 'PCAOne', x1_test_projected[:, 0])
-    test_b.insert(1, 'PCATwo', x1_test_projected[:, 1])
-    #train.to_csv("train.csv")
-    #test.to_csv("test.csv")
-
     tokeep = ['num_var39_0',  # 0.00031104199066874026
               'ind_var13',  # 0.00031104199066874026
               'num_op_var41_comer_ult3',  # 0.00031104199066874026
@@ -136,9 +113,9 @@ if __name__ == "__main__":
               'var38',  # 0.1390357698289269
               'var15']  # 0.20964230171073095
     features = train.columns[1:-1]
-    todrop = list(set(tokeep).difference(set(features)))
+    todrop = list(set(features).difference(set(tokeep)))
+
     train.drop(todrop, inplace=True, axis=1)
-    test_b.drop(todrop, inplace=True, axis=1)
     test.drop(todrop, inplace=True, axis=1)
     features = train.columns[1:-1]
     split = 10
@@ -149,7 +126,6 @@ if __name__ == "__main__":
 
     train_preds = None
     test_preds = None
-    testb1 = None
     visibletrain = blindtrain = train
     index = 0
     print('Change num_rounds to 350')
@@ -198,36 +174,26 @@ if __name__ == "__main__":
         dfulltest = \
             xgb.DMatrix(csr_matrix(test[features]),
                         silent=True)
-        dfulltestb = \
-            xgb.DMatrix(csr_matrix(test_b[features]),
-                        silent=True)
         if(train_preds is None):
             train_preds = clf.predict(dfulltrain)
             test_preds = clf.predict(dfulltest)
-            testb1 = clf.predict(dfulltestb)
-
         else:
             train_preds *= clf.predict(dfulltrain)
             test_preds *= clf.predict(dfulltest)
-            testb1 *= clf.predict(dfulltestb)
         del dfulltrain
         del dfulltest
         del clf
         gc.collect()
-    # get results for set b
 
     train_preds = np.power(train_preds, 1./index)
     test_preds = np.power(test_preds, 1./index)
-    testb1 = np.power(testb1,1./index)
     print('Average Log Loss:', log_loss(train.TARGET.values, train_preds))
     print('Average ROC:', roc_auc_score(train.TARGET.values, train_preds))
     submission = pd.DataFrame({"ID": train.ID,
                                "TARGET": train.TARGET,
                                "PREDICTION": train_preds})
-    setb = pd.DataFrame({"ID":test_b.ID, "TARGET":testb1})
+
     submission.to_csv("simplexgbtrain.csv", index=False)
     submission = pd.DataFrame({"ID": test.ID, "TARGET": test_preds})
     submission.to_csv("simplexgbtest.csv", index=False)
-    setb.to_csv("submission_db.csv",index=False)
     print('Finish')
-

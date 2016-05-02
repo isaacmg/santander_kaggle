@@ -3,38 +3,23 @@ library(Matrix)
 
 set.seed(1234)
 
-train <- read.csv("train.csv")
-test  <- read.csv("test.csv")
+train <- read.csv("train/train2.csv")
+test  <- read.csv("train/test2.csv")
 
 ##### Removing IDs
-train$ID <- NULL 
+train$ID <- NULL
 test.id <- test$ID
 test$ID <- NULL
+##
+count1 <- function(x) {
+  return( sum(x >1) )
+}
+tc <- test
+n1 <- apply(test, 1, FUN=count1) 
 
 ##### Extracting TARGET
 train.y <- train$TARGET
 train$TARGET <- NULL
-count1 <- function(x) {
-  return( sum(x >1) )
-}
-n1 <- apply(test, 1, FUN=count1) 
-var15 = test['var15']
-saldo_medio_var5_hace2 = test['saldo_medio_var5_hace2']
-saldo_var33 = test['saldo_var33']
-var38 = test['var38']
-v21 = test['var21']
-nv = test['num_var33']+test['saldo_medio_var33_ult3']+test['saldo_medio_var44_hace2']+test['saldo_medio_var44_hace3']+
-test['saldo_medio_var33_ult1']+test['saldo_medio_var44_ult1']
-num_var30 = test['num_var30']
-num_var13_0 = test['num_var13_0']
-num_var33_0 = test['num_var33_0']
-
-
-# BAD
-# num_var35 = test['num_var35']
-# No improvement
-# num_var1 = test['num_var1']
-
 
 ##### 0 count per line
 count0 <- function(x) {
@@ -75,6 +60,7 @@ test$var38 <- log(test$var38)
 
 train <- train[, feature.names]
 test <- test[, feature.names]
+#tc <- test
 
 #---limit vars in test based on min and max vals of train
 print('Setting min-max lims on test data')
@@ -98,7 +84,7 @@ watchlist <- list(train=dtrain)
 param <- list(  objective           = "binary:logistic", 
                 booster             = "gbtree",
                 eval_metric         = "auc",
-                eta                 = 0.0202047,
+                eta                 = 0.0202048,
                 max_depth           = 5,
                 subsample           = 0.6815,
                 colsample_bytree    = 0.701
@@ -131,24 +117,43 @@ AUC<-function(actual,predicted)
 }
 AUC(train.y,pred) ##AUC
 
-preds[var15 < 23] = 0
-preds[saldo_medio_var5_hace2 > 160000] = 0
-preds[saldo_var33 > 0] = 0
-preds[var38 > 3988596] = 0
+nv = tc['num_var33']+tc['saldo_medio_var33_ult3']+tc['saldo_medio_var44_hace2']+tc['saldo_medio_var44_hace3']+
+tc['saldo_medio_var33_ult1']+tc['saldo_medio_var44_ult1']
+
+##TEST TRY num_var4 at top
+#preds[tc['num_var4'] > 5] = 1
+
 preds[nv > 0] = 0
-preds[v21 > 7500] = 0
-preds[num_var30 > 9] = 0
-preds[num_var13_0 > 6] = 0
-preds[num_var33_0 > 0] = 0
+preds[tc['var15'] < 23] = 0
+preds[tc['saldo_medio_var5_hace2'] > 160000] = 0
+preds[tc['saldo_var33'] > 0] = 0
+preds[tc['var38'] > 3988596] = 0
+preds[tc['var21'] > 7500] = 0
+preds[tc['num_var30'] > 9] = 0
+preds[tc['num_var13_0'] > 6] = 0
+preds[tc['num_var33_0'] > 0] = 0
+preds[tc['imp_ent_var16_ult1'] > 51003] = 0
+preds[tc['imp_op_var39_comer_ult3'] > 13184] = 0
+preds[tc['saldo_medio_var5_ult3'] > 108251] = 0
+preds[(tc['var15']+tc['num_var45_hace3']+tc['num_var45_ult3']+tc['var36']) <= 24] = 0
+preds[tc['saldo_var5'] > 137615] = 0
+preds[n1>115]=0
+preds[tc['saldo_medio_var13_largo_ult1']>0]=0
+preds[tc['saldo_medio_var13_largo_hace2']>0]=0
+
+
 
 # BAD
-# preds[num_var35 > 21] = 0
-# preds[num_var1 > 3] = 0
+# num_var35 = tc['num_var35']
+# saldo_var30 = tc['saldo_var30']
+# preds[tc['imp_aport_var13_hace3']>210000.000000]=0 bad 
+# No improvement
+# num_var1 = tc['num_var1']
+#preds[tc['num_meses_var13_largo_ult3']>0]=0 
 
 # Testing
-preds[preds<0.002]=0
-#result
-preds[n1>115]=0
+preds[preds<0.001]=0
+
 submission <- data.frame(ID=test.id, TARGET=preds)
 cat("saving the submission file\n")
 write.csv(submission, "submission.csv", row.names = F)

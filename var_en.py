@@ -3,6 +3,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib
+import math
 matplotlib.use("Agg")
 
 from sklearn.cross_validation import train_test_split
@@ -77,7 +78,9 @@ def num_var(var3):
 
     return 0
 def catty(var3):
-   return num_var(var3)+var_36(var3)
+   if var3['num_var4']==0 and var3['var36']==99 and var3['num_var5']==0:
+       return 1
+   return 0
 
 #
 def var_5(var3):
@@ -93,6 +96,8 @@ def apply_average(y):
   
    aveg = avg/3
    return avg
+def take_log(var3):
+    return math.log(var3['var38'])
 
 
 
@@ -103,7 +108,7 @@ test = pd.read_csv("train/test2.csv", index_col=0)
 #result2['TARGET2'] = resut1.TARGET
 #resut1['TARGET']=result2.apply(lambda row: apply_average(row),axis=1)
 #resut1.to_csv("subm.csv")
-#training['n0'] = (training > 0).sum(axis=1)
+#training['n2'] = training.sum(axis=1)
 #test['n0'] = (test > 0).sum(axis=1)
 
 
@@ -115,24 +120,25 @@ print(test.shape)
 X = training.iloc[:,:-1]
 y = training.TARGET
 s = training.var15
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.25, random_state=42)
+#X_train, X_test, y_train, y_test = train_test_split(
+    #X, y, test_size=0.25, random_state=42)
 
 # Add zeros per row as extra feature
 #X['var9'] = X.sum(axis=1)
 
 
-
+#X['n2'] = training.sum(axis=1)
 s=s.to_frame()
+X['new_var']=training.apply(lambda row: catty(row),axis=1)
+X['var38']=training.apply(lambda row: take_log(row),axis=1)
+
 X['TARGET']=y
 
-X['var_new']=training.apply(lambda row: catty(row),axis=1)
 
 
+total_counts = X['saldo_medio_var13_largo_ult1'].describe()
 
-total_counts = X['var_new'].value_counts()
-
-target_counts = X[X.TARGET==1].var_new.value_counts()
+target_counts = X[X.TARGET==1].saldo_medio_var13_largo_ult1.describe()
 print total_counts
 print target_counts
 
@@ -142,7 +148,7 @@ print target_counts
 #print target_counts[3]/total_counts[3]
 #print target_counts[4]/total_counts[4]
 #print target_counts[5]/total_counts[5]
-print X['var_new'].value_counts()
+#print X['var_new'].value_counts()
 
 print total_counts
 
@@ -156,23 +162,25 @@ print total_counts
 ##fig2 = plt.gcf()
 ##plt.show()
 sns.FacetGrid(X, hue="TARGET", size=6) \
-   .map(sns.kdeplot, "var_new") \
+   .map(sns.kdeplot, "new_var") \
 
-plt.title('var_new');
+plt.title('new_var')
 
 plt.draw()
 plt.show()
 #fig2.savefig("new_feature.png")
 
 
+test['var38']=training.apply(lambda row: take_log(row),axis=1)
 
 #X['age']=training.apply(lambda row: age(row),axis=1)
+test['new_var']=test.apply(lambda row:catty(row),axis=1)
 X['TARGET']=y
 
-test['var_new']=test.apply(lambda row:catty(row),axis=1)
 
 X.to_csv("train.csv")
 test.to_csv("test.csv")
+
 
 
 
