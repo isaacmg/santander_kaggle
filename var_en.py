@@ -7,7 +7,7 @@ import math
 matplotlib.use("Agg")
 
 from sklearn.cross_validation import train_test_split
-
+# Function used for stacking models
 def stacker_up():
     trained_a = pd.read_csv("train/a_train.csv", index_col=0)
     test = pd.read_csv("train/test2.csv", index_col=0)
@@ -36,7 +36,7 @@ def age(age):
         return "upmiddle"
     else:
         return "old"
-# Categorize var_38
+# Categorize var_38 into two different categories based on it's most common value.
 def var_38(var3, i):
     if str(var3['var38']) == '117310.979016':
         return "avg"
@@ -77,12 +77,13 @@ def num_var(var3):
         return 0
 
     return 0
+# New feature that combined num_var4, var_36, and num_var5
 def catty(var3):
    if var3['num_var4']==0 and var3['var36']==99 and var3['num_var5']==0:
        return 1
    return 0
 
-#
+#categorization of var_5 between postive and negative
 def var_5(var3):
     if var3['saldo_medio_var5_ult3']<0:
         return "pos"
@@ -96,6 +97,7 @@ def apply_average(y):
   
    aveg = avg/3
    return avg
+# taking the log of a feature
 def take_log(var3):
     return math.log(var3['var38'])
 
@@ -103,13 +105,6 @@ def take_log(var3):
 
 training = pd.read_csv("train/train2.csv", index_col=0)
 test = pd.read_csv("train/test2.csv", index_col=0)
-#resut1 = pd.read_csv("simplexgbtest.csv", index_col=0)
-#result2 =pd.read_csv("submission.csv", index_col=0)
-#result2['TARGET2'] = resut1.TARGET
-#resut1['TARGET']=result2.apply(lambda row: apply_average(row),axis=1)
-#resut1.to_csv("subm.csv")
-#training['n2'] = training.sum(axis=1)
-#test['n0'] = (test > 0).sum(axis=1)
 
 
 print(training.shape)

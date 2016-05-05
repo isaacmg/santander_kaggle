@@ -146,8 +146,8 @@ preds[tc['num_var24_0'] > 3] = 0
 preds[tc['num_var26_0'] > 12] = 0
 preds[tc['saldo_medio_var13_largo_hace2']>0]=0
 #preds[n1>115]=0
-preds[tc['saldo_var13_corto']>309000]=0 
-preds[tc['saldo_medio_var8_hace3']>1415]=0
+#preds[tc['saldo_var13_corto']>309000]=0 
+#preds[tc['saldo_medio_var8_hace3']>1415]=0
 
 
 # BAD
